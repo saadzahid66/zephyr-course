@@ -2,29 +2,19 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-// #define SLEEP_TIME_MS 1000 // Already set in Kconfig file
+#define RED_LED_NODE DT_ALIAS(ext_red_led)
 
-/* The devicetree node identifier for the "led0" alias. */
-#define LED_NODE DT_ALIAS(led0)
+static const struct gpio_dt_spec red_led = GPIO_DT_SPEC_GET(RED_LED_NODE, gpios);
 
-static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED_NODE, gpios);
-
-LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
-
-int main(void)
+int main()
 {
-    bool led_state = true;
+    gpio_pin_configure_dt(&red_led, GPIO_OUTPUT_INACTIVE);
 
-    if (!gpio_is_ready_dt(&led)) return 0;
-
-    if (gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE) < 0) return 0;
-
-    while (1) {
-        if (gpio_pin_toggle_dt(&led) < 0) return 0;
-
-        led_state = !led_state;
-        LOG_INF("LED state: %s", led_state ? "ON" : "OFF");
-        k_msleep(CONFIG_BLINK_SLEEP_TIME_MS);
+    while(1) {
+        gpio_pin_toggle_dt(&red_led);
+        k_msleep(CONFIG_LED_BLINK_TIME_MS);
     }
+
     return 0;
+
 }

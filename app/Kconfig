@@ -1,34 +1,12 @@
-menuconfig "LED_SUBSYSTEM"
-    bool "LED Subsystem"
-    default n
-
-if LED_SUBSYSTEM
-
-choice LED_BLINK_SPEED_TIME
-    prompt "LED Blink Speed time"
-    default LED_BLINK_SLEEP_MEDIUM
-
-    config BLINK_SLEEP_FAST
-        bool "Fast (250ms)
-        help "Fast LED Blinking"
-
-    config BLINK_SLEEP_MEDIUM
-        bool "Normal (1000ms)"
-
-    config BLINK_SLEEP_SLOW
-        bool "Slow (2000ms)"
-endchoice
-
-config BLINK_SLEEP_TIME_MS
-    int 
-    default 250 if BLINK_SLEEP_250MS
-    default 1000 if BLINK_SLEEP_1000MS
-    default 2000 if BLINK_SLEEP_2000MS
-    default 0
-    help
-        Set the LED blink time in milliseconds. 
-        The default is set to 1000 ms ( 1s)
-
-endmenu #if 
-
 source "Kconfig.zephyr"
+
+menu "LED Application"
+
+config LED_BLINK_TIME_MS
+    int "LED blink time (ms)"
+    default 1000
+    range 500 2000
+    help
+        Set the LED blink time in milliseconds.
+
+endmenu
